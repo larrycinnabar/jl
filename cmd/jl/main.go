@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/larrycinnabar/jl"
 	"github.com/mattn/go-isatty"
-	"github.com/mightyguava/jl"
 	"os"
 )
 
