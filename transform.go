@@ -3,7 +3,9 @@ package jl
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -63,7 +65,7 @@ func (remain Ellipsize) Transform(ctx *Context, input string) string {
 	}
 	remain -= 1 // account for the ellipsis
 	chomped := length - int(remain)
-	start := int(remain)/2
+	start := int(remain) / 2
 	end := start + chomped
 	return input[:start] + "…" + input[end:]
 }
@@ -105,4 +107,17 @@ type Format string
 
 func (t Format) Transform(ctx *Context, input string) string {
 	return fmt.Sprintf(string(t), input)
+}
+
+type timeSeconds struct{}
+
+func TimeSeconds() *timeSeconds { return &timeSeconds{} }
+
+func (t *timeSeconds) Transform(ctx *Context, input string) string {
+	nanos, err := strconv.Atoi(input)
+	if err != nil {
+		return "*" + input
+	}
+
+	return time.Unix(0, int64(nanos)).Format(time.StampMilli)
 }

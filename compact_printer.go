@@ -1,6 +1,7 @@
 package jl
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -37,11 +38,19 @@ type FieldFmt struct {
 // for most types of logs.
 var DefaultCompactPrinterFieldFmt = []FieldFmt{{
 	Name:         "level",
-	Finders: []FieldFinder{ByNames("level", "severity")},
+	Finders:      []FieldFinder{ByNames("level", "severity")},
 	Transformers: []Transformer{Truncate(4), UpperCase, ColorMap(LevelColors)},
 }, {
 	Name:    "time",
-	Finders: []FieldFinder{ByNames("timestamp", "time")},
+	Finders: []FieldFinder{ByNames("time")},
+}, {
+	Name:         "time-nanos",
+	Finders:      []FieldFinder{ByNames("timestamp.nanos")},
+	Transformers: []Transformer{TimeSeconds(), Format("[%s]"), ColorSet(Magenta)},
+	Stringer: func(ctx *Context, v interface{}) string {
+		t, _ := v.(json.RawMessage)
+		return string(t)
+	},
 }, {
 	Name:         "thread",
 	Transformers: []Transformer{Ellipsize(16), Format("[%s]"), RightPad(18), ColorSequence(AllColors)},

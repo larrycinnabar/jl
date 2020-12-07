@@ -54,3 +54,20 @@ func (c *mappingColorizer) Transform(ctx *Context, input string) string {
 	}
 	return input
 }
+
+type colorSetter struct {
+	clr Color
+}
+
+// ColorMap assigns colors by mapping the original, pre-transform field value to a color based on a pre-defined mapping.
+func ColorSet(clr Color) *colorSetter {
+	return &colorSetter{clr}
+}
+
+func (c *colorSetter) Transform(ctx *Context, input string) string {
+	if ctx.DisableColor {
+		return input
+	}
+
+	return ColorText(c.clr, input)
+}
